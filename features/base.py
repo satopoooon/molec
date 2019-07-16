@@ -36,8 +36,6 @@ def generate_features(namespace, overwrite):
 class Feature(metaclass=ABCMeta):
     prefix = ''
     suffix = ''
-    #dir = '.'
-    path = r"/Users/satoshi/git/ml-competition-template-titanic/features"
 
     def __init__(self):
         if self.__class__.__name__.isupper():
@@ -50,8 +48,11 @@ class Feature(metaclass=ABCMeta):
 
         self.train = pd.DataFrame()
         self.test = pd.DataFrame()
-        self.train_path = Path(self.path) / f'{self.name}_train.feather'
-        self.test_path = Path(self.path) / f'{self.name}_test.feather'
+#        self.etc_file = pd.DataFrame()
+
+        self.train_path = f'../data/{self.name}_train.feather'
+        self.test_path = f'../data/{self.name}_test.feather'
+#        self.etc_path = f'../data/{self.name}_.feather'
 
     def run(self):
         with timer(self.name):
@@ -60,6 +61,8 @@ class Feature(metaclass=ABCMeta):
             suffix = '_' + self.suffix if self.suffix else ''
             self.train.columns = prefix + self.train.columns + suffix
             self.test.columns = prefix + self.test.columns + suffix
+
+
         return self
 
     @abstractmethod
@@ -67,14 +70,10 @@ class Feature(metaclass=ABCMeta):
         raise NotImplementedError
 
     def save(self):
-        #path = r"/Users/satoshi/git/ml-competition-template-titanic"
-        #train_path = path + "/" + str(self.train_path)
-        #test_path = path + "/" + str(self.test_path)
-        print(str(self.train_path))
-        #print(test_path)
-        self.train.to_feather(str(self.train_path))
-        self.test.to_feather(str(self.test_path))
+
+        self.train.to_feather(self.train_path)
+        self.test.to_feather(self.test_path)
 
     def load(self):
-        self.train = pd.read_feather(str(self.train_path))
-        self.test = pd.read_feather(str(self.test_path))
+        self.train = pd.read_feather(self.train_path)
+        self.test = pd.read_feather(self.test_path)
